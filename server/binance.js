@@ -2,7 +2,7 @@ const WebSocket=require('ws');
 const Axios=require("axios");
 const HttpsProxyAgent = require("https-proxy-agent");
 
-function binance(io)
+function binance(io,log)
 {
     var data={};
     var curdata=[];
@@ -12,6 +12,7 @@ function binance(io)
     proxy:false,
     httpsAgent
     });
+    
     this.init=function()
     {
          //console.log('init');
@@ -40,7 +41,7 @@ function binance(io)
                     return true;
                 }
             }
-            if(curdata.length<100)
+            if(curdata.length<50)
             curdata=[...curdata,l];
             return false;
     }
@@ -59,7 +60,7 @@ function binance(io)
     }
     this.findnew=function(dt)
     {
-        dt=[...dt,{s:"ddd",c:"25.00"}];
+       // dt=[...dt,{s:"测试币",c:"25.00"}];
         for(var i in dt)
         {
             this.isnew(dt[i]);
@@ -77,6 +78,7 @@ function binance(io)
            //console.log("send update");
            this.findnew(JSON.parse(event.data));
             io.to("1").emit("update",curdata);
+            log("update");
         }
         this.ws.onclose=()=>{
             this.reconnect();

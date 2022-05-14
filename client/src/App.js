@@ -6,6 +6,7 @@ import './App.css';
 import io from "socket.io-client";
 import ReactAudioPlayer from 'react-audio-player';
 import sounds from './70097.mp3'
+import TextArea from "antd/lib/input/TextArea";
 
 
 const socket=io("http://192.168.0.201:3001");
@@ -13,8 +14,15 @@ const socket=io("http://192.168.0.201:3001");
 function App() {
   const [data, setData] = useState([]);
   const [nn,setnn]=useState("");
+  const [logs,setlogs]=useState("");
   let audiosDom; //音频
 const audioRef = useRef(null);
+const tb_header=()=>
+{
+return (
+  "aaaaaa"
+)
+}
   const close = () => {
     
     //audiosDom=audios.current;
@@ -35,13 +43,13 @@ const audioRef = useRef(null);
         知道了
       </Button>
     );
-    
+    const cur=new Date();
     notification.open({
       message: '提醒',
       duration: null,
       placement: "top",
       description:
-        '新币名称: '+nn,
+        '新币名称: '+nn+'  '+cur.toLocaleDateString()+cur.toLocaleTimeString(),
       btn,
       key,
       onClose: close,
@@ -56,6 +64,7 @@ useEffect(()=>{
   setnn("");
   }
 },[nn]);
+
  useEffect(()=>{
     socket.on("update", (rdata) => {
       //const dd=JSON.parse(rdata);
@@ -66,6 +75,12 @@ useEffect(()=>{
     });
     socket.on("new",(rdata)=>{
       setnn(rdata);
+      
+    });
+    socket.on("log",(rdata)=>{
+      let ll=logs;
+      ll=ll+rdata;
+      setlogs(ll);
       
     });
   },[]);
@@ -92,7 +107,8 @@ useEffect(()=>{
         
       />
     
-    <Table dataSource={data} columns={columns} />
+    <Table dataSource={data} columns={columns} pagination={{pageSize:5}} title={tb_header} />
+    <TextArea readOnly={true} value={logs} rows={10} style={{overflowY:"scroll"}} />
     </div>
   );
 }
