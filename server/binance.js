@@ -40,7 +40,9 @@ function binance(io,log)
           };
           io.to("1").emit("info",d);
       }
-
+      this.status=(tt)=>{
+        io.to("1").emit("stat",tt);
+      }
     this.getdata=async (area)=>
     {
        
@@ -87,7 +89,7 @@ function binance(io,log)
             {
             if(this.filter(dd.title))
             {
-                console.log(dd.title);
+                //console.log(dd.title);
                 const dt=new Date(dd.time);
                 
                 lastgg={
@@ -104,9 +106,11 @@ function binance(io,log)
     }
     this.checkNew=async function()
     {
+        this.status("获取加密币列表...");
         const pl=await this.getdata(0);
         const nl=await this.getdata(2);
         const pl2=await this.getdata(1);
+        this.status("获取公告...");
         const nc=await this.getdata(3);
         if(pl==null || nl==null || pl2==null || nc==null)
         {
@@ -114,7 +118,9 @@ function binance(io,log)
             return;
         }
         isworking=true;
+        this.status("更新公告...");
         this.gonggao(nc);
+        this.status("检查加密币...");
         if(pl.data.code=="000000")
         {
             const d=pl.data.data;
@@ -153,13 +159,14 @@ function binance(io,log)
             if(bdata.length==0)
             {
             bdata=[...bdata,...pl2.data.data];
-            
+            bdata.pop();
             }
             else
             this.findnew(1,pl2.data.data);
         }
         dataok=true;
         this.sendinfo();
+        this.status("空闲");
         isworking=false;
         
         //this.paydata=[...this.paydata,pl.]

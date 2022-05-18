@@ -6,7 +6,25 @@ services:
     build:
       context: client
       dockerfile: ./Dockerfile
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
     environment:
       NODE_ENV: production
     ports:
       - 3000:3000
+    restart: always
+  server:
+    image: server
+    build:
+      context: server
+      dockerfile: ./Dockerfile
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3001:3001
+    restart: always
+

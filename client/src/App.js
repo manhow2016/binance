@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState,useRef} from "react";
 import {Table,Button, notification,Card} from "antd";
-import "antd/dist/antd.css";
 import './App.css';
 
 import io from "socket.io-client";
@@ -20,6 +19,7 @@ function App() {
   const [paycount,setPaycount]=useState(496);
   const [pcount,setPcount]=useState(380);
   const [gonggao,setGonggao]=useState({});
+  const [stat,setStat]=useState("空闲");
   let audiosDom; //音频
 const audioRef = useRef(null);
 const logref= useRef(null);
@@ -86,6 +86,9 @@ useEffect(()=>{
     setnn(rdata);
     
   });
+  socket.on("stat",(rdata)=>{
+    setStat(rdata);
+  });
     socket.on("log",(rdata)=>{
       setlogs(aa => [rdata,...aa]);
       console.log(rdata);
@@ -141,7 +144,7 @@ useEffect(()=>{
     </Card>
   </div>
   <div>
-    <Card size="small" title="日志" bordered={true} style={{ width:"96%",height:"300px"}}>
+    <Card size="small" title={"当前状态："+stat} bordered={true} style={{ width:"96%",height:"300px"}}>
     <div style={{width:"100%",display:"flex",flexDirection:"column",overflowY:"scroll",height:"240px"}} ref={logref}>
       {logs.map((m)=>{
 
