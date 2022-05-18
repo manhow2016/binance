@@ -1,6 +1,16 @@
 version: '3.4'
 
 services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "8008:9000"
+    restart: always
+    privileged: true
   client:
     image: client
     build:
@@ -27,4 +37,6 @@ services:
     ports:
       - 3001:3001
     restart: always
+volumes:
+  portainer_data:
 
