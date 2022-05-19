@@ -41,7 +41,7 @@ function binance(io,log)
           if(socket==null)
           io.to("1").emit("info",d);
           else
-          socket.to("1").emit("info",d);
+          socket.emit("info",d);
       }
       this.status=(tt)=>{
         io.to("1").emit("stat",tt);
@@ -206,7 +206,7 @@ function binance(io,log)
         if(socket==null)
         io.to("1").emit("logs",logs);
         else
-        socket.to("1").emit("logs",logs);
+        socket.emit("logs",logs);
         }
     }
     this.isexit=function (l)
