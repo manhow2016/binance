@@ -3,7 +3,7 @@ const Axios=require("axios");
 const HttpsProxyAgent = require("https-proxy-agent");
 const format=require("string-format");
 const cronjob=require("cron").CronJob;
-
+const nodemailer = require('nodemailer');
 function binance(io,log)
 {
     var data={};
@@ -16,6 +16,20 @@ function binance(io,log)
     var lastgg={};
     let isworking=false;
     let dataok=false;
+    let transporter=nodemailer.createTransport(
+        {
+            host: "smtp.qq.com",
+            port: 465,
+            secure:true,
+            service: "qq",
+            auth:
+            {
+                user: "820259068@qq.com",
+                pass: "nufubxlxkjfqbcie"
+            }
+
+        }
+    );
     const httpsAgent = new HttpsProxyAgent("http://127.0.0.1:8889");
     const axios = Axios.create({
     proxy:false,
@@ -224,6 +238,23 @@ function binance(io,log)
             curdata=[...curdata,l];
             return false;
     }
+    this.mail=(ll)=>{
+        const message = {
+            from: '"雷锋快讯" <820259068@qq.com>',
+            to: "15963428@qq.com",
+            subject: "公告",
+            text: ll.msg
+        };
+        transporter.sendMail(message,(err,info)=>{
+            if(err)
+            {
+                console.log(err);
+                return;
+            }
+
+        });
+
+    }
     this.sendnew=function(type,l)
     {
         const cur=new Date(Date.now());
@@ -262,6 +293,7 @@ function binance(io,log)
         logs=[...logs,ll];
         io.to("1").emit("log",ll);
         io.to("1").emit("new",s);
+        this.mail(ll);
         return true;
     }
     this.findnew=function(type,dt)
