@@ -13,7 +13,7 @@ function binance(io,log)
     var bdata=[];
     var pdata=[];
     var paydata=[];
-    var lastgg=null;
+    var lastgg={};
     let isworking=false;
     let dataok=false;
     const httpsAgent = new HttpsProxyAgent("http://127.0.0.1:8889");
@@ -30,7 +30,7 @@ function binance(io,log)
     this.createTimestamp = function () {
         return parseInt(new Date().getTime() / 1000) + '';
       };
-      this.sendinfo=()=>{
+      this.sendinfo=(socket=null)=>{
           if(dataok==false) return;
           const d={
               bcount:bdata.length,
@@ -38,7 +38,10 @@ function binance(io,log)
               paycount:paydata.length,
               gonggao:lastgg
           };
+          if(socket==null)
           io.to("1").emit("info",d);
+          else
+          socket.to("1").emit("info",d);
       }
       this.status=(tt)=>{
         io.to("1").emit("stat",tt);
@@ -59,7 +62,7 @@ function binance(io,log)
                 url="https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-products?includeEtf=true";
                 break;
             case 3:
-                url="https://www.binance.com/bapi/composite/v3/public/market/notice/get?page=1&rows=50&lang=cn";
+                url="https://www.binance.com/bapi/composite/v3/public/market/notice/get?page=2&rows=50&lang=cn";
                 break;
         }
        // console.log(url);
@@ -76,7 +79,7 @@ function binance(io,log)
     }
     this.filter=(title)=>
     {
-        if(title.indexOf("上市")>=0 || title.indexOf("新增")>=0)return true;
+        if(title.indexOf("上市")>=0)return true;
         return false;
     }
     this.gonggao=(gg)=>{
@@ -159,7 +162,7 @@ function binance(io,log)
             if(bdata.length==0)
             {
             bdata=[...bdata,...pl2.data.data];
-            bdata.pop();
+           // bdata.pop();
             }
             else
             this.findnew(1,pl2.data.data);
@@ -195,11 +198,16 @@ function binance(io,log)
         );*/
         cronjob
     }
-    this.sendlogs=function()
+    this.sendlogs=function(socket=null)
     {
         if(dataok==false) return;
         if(logs.length>0)
+        {
+        if(socket==null)
         io.to("1").emit("logs",logs);
+        else
+        socket.to("1").emit("logs",logs);
+        }
     }
     this.isexit=function (l)
     {

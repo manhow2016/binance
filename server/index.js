@@ -30,8 +30,8 @@ io.on("connection", (socket) => {
 const tt=`[${cur.toLocaleDateString()+"  "+cur.toLocaleTimeString()}]`+" 连接成功！"+"\r\n";
    socket.emit("log",{msg:tt});
    //console.log(tt);
-   bc.sendinfo();
-   bc.sendlogs();
+   bc.sendinfo(socket);
+   bc.sendlogs(socket);
 
 });
 

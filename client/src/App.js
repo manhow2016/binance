@@ -15,9 +15,9 @@ function App() {
   const [data, setData] = useState([]);
   const [nn,setnn]=useState("");
   const [logs,setlogs]=useState([]);
-  const [bcount,setBcount]=useState(500);
-  const [paycount,setPaycount]=useState(496);
-  const [pcount,setPcount]=useState(380);
+  const [bcount,setBcount]=useState(0);
+  const [paycount,setPaycount]=useState(0);
+  const [pcount,setPcount]=useState(0);
   const [gonggao,setGonggao]=useState({});
   const [stat,setStat]=useState("空闲");
   let audiosDom; //音频
@@ -81,30 +81,50 @@ useEffect(()=>{
 },[nn]);
 
  useEffect(()=>{
-
+  if(!socket.hasListeners("new"))
+  {
   socket.on("new",(rdata)=>{
     setnn(rdata);
     
-  });
+  })
+}
+
+  if(!socket.hasListeners("log"))
+  {
+  socket.on("log",(rdata)=>{
+      
+    setlogs((aa) => [rdata,...aa]);
+    console.log(rdata);
+    
+  })
+}
+
+if(!socket.hasListeners("stat"))
+{
   socket.on("stat",(rdata)=>{
     setStat(rdata);
-  });
-    socket.on("log",(rdata)=>{
-      setlogs(aa => [rdata,...aa]);
-      console.log(rdata);
-      
-    });
+  })
+}
+
+if(!socket.hasListeners("logs"))
+{
     socket.on("logs",(rdata)=>{
       //console.log(rdata);
       setlogs(rdata);
       
-    });
+    })
+  }
+
+  if(!socket.hasListeners("info"))
+  {
     socket.on("info",(rdata)=>{
+      console.log("info");
       setBcount(rdata.bcount);
       setPaycount(rdata.paycount);
       setPcount(rdata.pcount);
       setGonggao(rdata.gonggao);
     })
+  }
   },[socket]);
   const columns = [
     {
@@ -132,19 +152,19 @@ useEffect(()=>{
     
     {/* <Table dataSource={data} columns={columns} pagination={{pageSize:5}} title={tb_header} /> */}
     <div>
-    <Card size="small" title="加密币" bordered={true} style={{ width:"96%" }}>
+    <Card size="small" title="加密币" bordered={true} bodyStyle={{backgroundColor:"InfoBackground"}} style={{marginLeft:"2%",width:"96%" }}>
     <p>capital:<font color="blue">{bcount}</font>&nbsp;&nbsp;wallet:<font color="blue">{paycount}</font>&nbsp;&nbsp;product:<font color="blue">{pcount}</font></p>
      
      </Card> 
 
     </div>
     <div>
-    <Card size="small" title="最新公告" bordered={true} style={{ width:"96%" }}>
+    <Card size="small" title="最新公告" bordered={true} bodyStyle={{backgroundColor:"InfoBackground"}} style={{ marginLeft:"2%",width:"96%" }}>
     <p style={{color:"blue"}}><strong>{gonggao.title}&nbsp;&nbsp;{gonggao.time}</strong></p>
     </Card>
   </div>
   <div>
-    <Card size="small" title={"当前状态："+stat} bordered={true} style={{ width:"96%",height:"300px"}}>
+    <Card size="small" title={"当前状态："+stat} bordered={true} bodyStyle={{backgroundColor:"InfoBackground"}} style={{marginLeft:"2%",width:"96%",height:"300px"}}>
     <div style={{width:"100%",display:"flex",flexDirection:"column",overflowY:"scroll",height:"240px"}} ref={logref}>
       {logs.map((m)=>{
 
