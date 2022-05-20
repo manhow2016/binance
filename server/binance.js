@@ -290,7 +290,7 @@ function binance(io,log)
         }
         
         
-        logs=[...logs,ll];
+        logs=[ll,...logs];
         io.to("1").emit("log",ll);
         io.to("1").emit("new",s);
         this.mail(ll);
@@ -308,7 +308,7 @@ function binance(io,log)
                         return item.assetCode==it.assetCode
                   })==undefined)
                    {
-                        paydata=[...paydata,it];
+                        paydata=[...dt];
                         this.sendnew(0,it);
                    };
                 });
@@ -320,7 +320,7 @@ function binance(io,log)
                      return item.coin==it.coin
                })==undefined)
                 {
-                     bdata=[...bdata,it];
+                     bdata=[...dt];
                      this.sendnew(1,it);
                 };
              });
@@ -332,7 +332,7 @@ function binance(io,log)
                      return item.s==it.s
                })==undefined)
                 {
-                     pdata=[...pdata,it];
+                     pdata=[...dt];
                      this.sendnew(2,it);
                 };
              });
