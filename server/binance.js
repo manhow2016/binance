@@ -275,7 +275,7 @@ function binance(io,log)
                 tp="capital";
                 ll=
                 {
-                    msg:format("[{} {}] {}新增 {}",cur.toLocaleDateString(),cur.toLocaleTimeString(),tp,l.coin)
+                    msg:format("[{} {}] {}新增 {}({})",cur.toLocaleDateString(),cur.toLocaleTimeString(),tp,l.name,l.coin)
                 };
                 s=l.coin;
                 break;
@@ -317,7 +317,7 @@ function binance(io,log)
             dt.forEach(it => {
                 if(bdata.find((item)=>{
                     
-                     return item.coin==it.coin
+                     return item.name==it.name
                })==undefined)
                 {
                      bdata=[...dt];
