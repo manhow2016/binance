@@ -16,6 +16,7 @@ function binance(io,log)
     var lastgg={};
     let isworking=false;
     let dataok=false;
+    let nlist=[];
     let transporter=nodemailer.createTransport(
         {
             host: "smtp.qq.com",
@@ -121,8 +122,17 @@ function binance(io,log)
             
         }
     }
+    this.getlines=(l)=>{
+        let lines="";
+        l.forEach(item=>{
+        lines=lines+item.msg+"\r\n";
+        }
+        );
+        return lines;
+    }
     this.checkNew=async function()
     {
+        nlist=[];
         this.status("获取加密币列表...");
         const pl=await this.getdata(0);
         const nl=await this.getdata(2);
@@ -183,6 +193,11 @@ function binance(io,log)
         }
         dataok=true;
         this.sendinfo();
+        if(nlist.length>0)
+        {
+        this.mail({msg:this.getlines(nlist)});
+        nlist=[];
+        }
         this.status("空闲");
         isworking=false;
         
@@ -210,7 +225,7 @@ function binance(io,log)
                 console.log(error);
             }
         );*/
-        cronjob
+        
     }
     this.sendlogs=function(socket=null)
     {
@@ -242,6 +257,7 @@ function binance(io,log)
         const message = {
             from: '"雷锋快讯" <820259068@qq.com>',
             to: "15963428@qq.com",
+            cc:"820259068@qq.com",
             subject: "公告",
             text: ll.msg
         };
@@ -293,7 +309,7 @@ function binance(io,log)
         logs=[ll,...logs];
         io.to("1").emit("log",ll);
         io.to("1").emit("new",s);
-        this.mail(ll);
+        nlist=[...nlist,ll];
         return true;
     }
     this.findnew=function(type,dt)
